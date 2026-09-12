@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Compare two glob patterns and find example file paths newly matched or silently dropped. Browser-only, no uploads.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; worker-src 'self' blob:; connect-src 'none'; img-src 'self' data:; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>GlobGap — See what your glob change actually changes.</title>
+  <link rel="icon" href="data:,"><link rel="stylesheet" href="./style.css"><script type="module" src="./app.js"></script>
+</head>
+<body>
+<main>
+  <header><a class="brand" href="./">GlobGap<span> / pattern diff</span></a><span class="local">Browser-only · No uploads</span></header>
+  <section class="intro"><p class="eyebrow">SMALL RULE CHANGE. DIFFERENT FILES.</p><h1>See what your glob change<br>actually changes.</h1><p>Compare two glob patterns and find example file paths<br class="desktop"> that would be newly matched or silently dropped.</p></section>
+  <form id="compare-form">
+    <div class="patterns"><label>Before<input id="before" name="before" autocomplete="off" spellcheck="false" aria-describedby="syntax"></label><span class="arrow" aria-hidden="true">→</span><label>After<input id="after" name="after" autocomplete="off" spellcheck="false" aria-describedby="syntax"></label></div>
+    <div class="controls"><label><input type="checkbox" id="dot"> Include dotfiles</label><label><input type="checkbox" id="nocase"> Case-insensitive</label><button type="submit" id="find">Find differences <span aria-hidden="true">↗</span></button><button type="button" class="secondary" id="cancel" disabled>Cancel</button></div>
+    <p id="syntax" class="hint">Relative paths with / · Supports literals, *, ?, standalone **, and {js,ts} alternatives.</p>
+    <details id="provided-details"><summary>Compare your own paths <span>— optional, one relative path per line</span></summary><label for="provided" class="hint">Only the text you paste is read. Spaces and Unicode are preserved. Up to 2,000 paths.</label><textarea id="provided" rows="6" spellcheck="false" placeholder="src/main.ts&#10;src/lib/util.ts"></textarea></details>
+  </form>
+  <nav id="demos" aria-label="Try a synthetic example"><span>TRY A CHANGE</span></nav>
+  <section id="results" aria-label="Comparison results" aria-busy="false">
+    <div class="result-heading"><h2>What changes?</h2><button id="copy" class="secondary" disabled>Copy Markdown report</button></div>
+    <p class="hint">Reports may contain private paths you pasted. Review before sharing.</p>
+    <p id="status" role="status" aria-live="polite">Loading synthetic example…</p><p id="summary" class="hint"></p>
+    <p id="no-differences" hidden>No differences found among the checked paths.</p>
+    <div class="diff-grid"><section class="added"><h3>+ ADDED <span id="added-count">0</span></h3><p>Newly matched by After</p><ul id="added"></ul></section><section class="removed"><h3>− REMOVED <span id="removed-count">0</span></h3><p>No longer matched by After</p><ul id="removed"></ul></section></div>
+    <details class="others"><summary id="others-summary">Other checked paths</summary><ul id="others"></ul></details>
+    <p class="limitation">This is a bounded search, not a proof of equivalence.</p><p class="hint">Generated examples are synthetic, not files known to exist in your project. Shorter examples found are shown first; they are not guaranteed globally shortest.</p>
+    <details id="report-preview" hidden><summary>Markdown report — preview or copy manually</summary><textarea id="report-text" readonly rows="12" aria-label="Markdown report"></textarea></details>
+  </section>
+  <footer><p id="engine"></p><p>Full relative paths; no basename-only matching. Semantics may differ from Git, Docker, Bash, GitHub Actions or other tools.</p><details><summary>Syntax, limits & privacy</summary><p>Not supported: negation (!), extglobs, parentheses, character classes/ranges, nested braces, brace ranges, backslash escapes, multiline patterns, or configuration imports. Empty, absolute, control-character, repeated-separator, dot-segment and trailing-slash paths are rejected. A final LF/CRLF is accepted as a line terminator; internal blank lines are errors.</p><p>Limits: 256 characters per pattern; 512 per path; 2,000 provided lines; 3,000 generated candidates; 64 brace combinations; 16 wildcard tokens; 4-second Worker timeout. Limit or timeout results are marked incomplete. Cancel or edit input to discard a running search.</p><p>Analysis runs in your browser. The app does not send inputs, scan files, save inputs to localStorage, call models, or use analytics. Visiting the hosted site still makes normal resource requests and may create hosting logs.</p><p id="options"></p></details><p><a id="repo-link" href="https://github.com/billy30183/globgap">GitHub · Source &amp; issues</a> · MIT · <a href="./THIRD_PARTY_NOTICES.txt">Third-party notices</a></p></footer>
+</main>
+</body></html>

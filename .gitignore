@@ -1,0 +1,9 @@
+node_modules/
+dist/
+test-results/
+playwright-report/
+.tools/
+gh-release.json
+*.log
+.env*
+tmp/
