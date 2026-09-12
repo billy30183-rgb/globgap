@@ -6,9 +6,11 @@ Publish only after the local test suite passes and every public-facing link cont
 
 Use PowerShell from the repository root. Node.js 22 or newer and GitHub CLI (`gh`) are required.
 
+An existing GitHub CLI login may need `gh auth refresh --hostname github.com --scopes workflow` before it can push the CI files. Complete that grant through GitHub's official device flow; never paste a token into an issue or shell script.
+
 ```powershell
 node --version
-gh auth login --hostname github.com --git-protocol https --web
+gh auth login --hostname github.com --git-protocol https --web --scopes workflow
 gh auth status --hostname github.com
 
 $ExpectedOwner = 'billy30183'
@@ -63,6 +65,7 @@ Create the empty public repository without `--push`, enable GitHub Actions as th
 gh repo create "$Owner/$Repo" --public --source . --remote origin
 gh api --method POST "repos/$Owner/$Repo/pages" -f build_type=workflow
 git push --set-upstream origin main
+if ($LASTEXITCODE -ne 0) { throw 'Push failed; do not continue to release.' }
 ```
 
 The `Pages` workflow reruns unit tests, the build, and Chromium browser tests before uploading only `dist`. Find and watch the run for the exact final commit:
@@ -71,6 +74,7 @@ The `Pages` workflow reruns unit tests, the build, and Chromium browser tests be
 $RunId = gh run list --repo "$Owner/$Repo" --workflow pages.yml --branch main --commit $FinalSha --limit 1 --json databaseId --jq '.[0].databaseId'
 if (-not $RunId) { throw "No Pages run found for $FinalSha." }
 gh run watch $RunId --repo "$Owner/$Repo" --exit-status
+if ($LASTEXITCODE -ne 0) { throw 'Workflow failed; do not release.' }
 ```
 
 Verify the deployed site itself with the browser suite. Tag and release only if the workflow and live test pass and `HEAD` is still the tested commit:
@@ -78,11 +82,14 @@ Verify the deployed site itself with the browser suite. Tag and release only if 
 ```powershell
 $env:LIVE_URL = $PagesUrl
 npm run test:browser
+$LiveTestExit = $LASTEXITCODE
 Remove-Item Env:LIVE_URL
+if ($LiveTestExit -ne 0) { throw 'Live browser tests failed; do not release.' }
 if ((git rev-parse HEAD) -ne $FinalSha) { throw 'HEAD changed after the verified workflow run.' }
 git tag --annotate v0.1.0 --message "v0.1.0"
 git push origin v0.1.0
-gh release create v0.1.0 --repo "$Owner/$Repo" --verify-tag --title "globgap v0.1.0" --generate-notes
+if ($LASTEXITCODE -ne 0) { throw 'Tag push failed; do not release.' }
+gh release create v0.1.0 --repo "$Owner/$Repo" --verify-tag --title "GlobGap v0.1.0" --notes-file docs/RELEASE_NOTES.md
 ```
 
 The workflows pin official GitHub actions to full commits resolved from their official repositories on 2026-09-12: `actions/checkout` v4 (`11d5960a326750d5838078e36cf38b85af677262`), `actions/setup-node` v4 (`49933ea5288caeca8642d1e84afbd3f7d6820020`), `actions/upload-pages-artifact` v3 (`56afc609e74202658d3ffba0e8f6dda462b719fa`), and `actions/deploy-pages` v4 (`d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e`).

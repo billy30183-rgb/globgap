@@ -20,4 +20,5 @@ await build({ ...config, entryPoints: ['src/app.js'], outdir: 'dist', plugins: [
 }] });
 for (const name of ['index.html', 'style.css']) await copyFile('public/' + name, 'dist/' + name);
 await copyFile('THIRD_PARTY_NOTICES.md', 'dist/THIRD_PARTY_NOTICES.txt');
+await copyFile('LICENSE', 'dist/LICENSE.txt');
 console.log('Built static site in dist/.');
