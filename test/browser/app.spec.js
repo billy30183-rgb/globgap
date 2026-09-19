@@ -69,3 +69,44 @@ test('subpath, clipboard, screenshot and mobile layout', async ({ page, context 
   await page.locator('[data-demo=typescript]').click(); await expect(page.locator('#copy')).toBeEnabled();
   await expect(page.locator('#added li')).not.toHaveCount(0);
 });
+
+test('dotfile and case options, provided source labels and exact report snapshot', async ({ page }) => {
+  await page.goto('./'); await expect(page.locator('#copy')).toBeEnabled();
+  await page.locator('#before').fill('src/*.ts');
+  await page.locator('#after').fill('src/*.TS');
+  await page.locator('#provided-details summary').click();
+  const provided = 'src/main.ts\nsrc/.hidden.TS';
+  await page.locator('#provided').fill(provided);
+  const check = async (options) => {
+    await page.locator('#find').click(); await expect(page.locator('#copy')).toBeEnabled();
+    const expected = analyze({ before: 'src/*.ts', after: 'src/*.TS', provided, options });
+    await expect(page.locator('#added-count')).toHaveText(String(expected.counts.ADDED));
+    await expect(page.locator('#removed-count')).toHaveText(String(expected.counts.REMOVED));
+    await page.locator('#copy').click(); await expect(page.locator('#report-text')).toHaveValue(report(expected));
+  };
+  await check({});
+  await expect(page.locator('#removed li').filter({ hasText: 'Provided path' })).toContainText('src/main.ts');
+  await expect(page.locator('#removed li').filter({ hasText: 'Generated example' }).first()).toBeVisible();
+  await page.locator('#dot').check(); await check({ dot: true });
+  await expect(page.locator('#added li').filter({ hasText: 'Provided path' })).toContainText('src/.hidden.TS');
+  await page.locator('#nocase').check(); await check({ dot: true, nocase: true });
+  await expect(page.locator('#no-differences')).toBeVisible();
+});
+
+test('oversized inputs are rejected and bounded generation is labelled incomplete', async ({ page }) => {
+  await page.goto('./'); await expect(page.locator('#copy')).toBeEnabled();
+  await page.locator('#before').fill('a'.repeat(257)); await page.locator('#find').click();
+  await expect(page.locator('#status')).toContainText('256'); await expect(page.locator('#copy')).toBeDisabled();
+  await page.locator('#before').fill('**/*');
+  await page.locator('#provided-details summary').click();
+  await page.locator('#provided').fill(Array(2001).fill('a').join('\n')); await page.locator('#find').click();
+  await expect(page.locator('#status')).toContainText('2000'); await expect(page.locator('#copy')).toBeDisabled();
+  await page.locator('#provided').fill('');
+  await page.locator('#before').fill(`root/{aa,bb}{cc,dd}{ee,ff}{gg,hh}{ii,jj}{kk,ll}/${'*?'.repeat(8)}.ext`);
+  await page.locator('#after').fill('other/**/*.{a,b,c,d,e,f,g,h}'); await page.locator('#find').click();
+  await expect(page.locator('#copy')).toBeEnabled(); await expect(page.locator('#status')).toContainText('Incomplete');
+  await expect(page.locator('#status')).toContainText('Candidate limit');
+  await expect(page.locator('#summary')).toContainText('3000 generated examples');
+  await page.locator('#copy').click();
+  expect(await page.locator('#report-text').inputValue()).toContain('Status: Incomplete');
+});
