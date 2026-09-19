@@ -4,7 +4,7 @@
 
 Compare two glob patterns and find example file paths that would be newly matched or silently dropped.
 
-[GitHub source](https://github.com/billy30183/globgap) · [Live demo — initial deployment pending](https://billy30183.github.io/globgap/)
+[GitHub source](https://github.com/billy30183-rgb/globgap) · [Live demo — initial deployment pending](https://billy30183-rgb.github.io/globgap/)
 
 You can also run `npm ci && npm run dev` and open [the local demo](http://127.0.0.1:4173/globgap/).
 
@@ -103,7 +103,7 @@ Visiting a hosted site still makes normal resource requests and may create hosti
 
 ## Contributing and publication
 
-Found a surprising pattern pair? Please [open an issue](https://github.com/billy30183/globgap/issues) with both patterns and a minimal example path. Include the selected options and engine version; avoid posting private paths. For local changes, run both test commands before submitting a PR.
+Found a surprising pattern pair? Please [open an issue](https://github.com/billy30183-rgb/globgap/issues) with both patterns and a minimal example path. Include the selected options and engine version; avoid posting private paths. For local changes, run both test commands before submitting a PR.
 
 See [publishing instructions](docs/PUBLISHING.md) for safe repository/Pages/release setup. The project has no npm package release.
 

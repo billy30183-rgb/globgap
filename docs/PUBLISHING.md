@@ -1,6 +1,6 @@
 # Publishing
 
-`billy30183/globgap` already exists. Never recreate it, replace it, or force-push it. Run these commands in PowerShell from the repository root. Node.js 22 or newer and GitHub CLI (`gh`) are required.
+`billy30183-rgb/globgap` already exists. Never recreate it, replace it, or force-push it. Run these commands in PowerShell from the repository root. Node.js 22 or newer and GitHub CLI (`gh`) are required.
 
 Use this helper after native commands so any failure stops publication:
 
@@ -14,10 +14,10 @@ function Get-RemoteHeads {
   Assert-LastExitCode 'Remote heads lookup'
   return $Heads
 }
-$Owner = 'billy30183'
+$Owner = 'billy30183-rgb'
 $Repo = 'globgap'
-$RepoUrl = 'https://github.com/billy30183/globgap'
-$PagesUrl = 'https://billy30183.github.io/globgap/'
+$RepoUrl = 'https://github.com/billy30183-rgb/globgap'
+$PagesUrl = 'https://billy30183-rgb.github.io/globgap/'
 ```
 
 ## Verify access and the existing repository
@@ -51,7 +51,7 @@ git status --short
 Assert-LastExitCode 'Working-tree inspection'
 $Origin = git remote get-url origin
 Assert-LastExitCode 'Origin lookup'
-if ($Origin -notin @('https://github.com/billy30183/globgap.git', 'git@github.com:billy30183/globgap.git')) {
+if ($Origin -notin @('https://github.com/billy30183-rgb/globgap.git', 'git@github.com:billy30183-rgb/globgap.git')) {
   throw "Unexpected origin: $Origin"
 }
 git fetch --prune origin
