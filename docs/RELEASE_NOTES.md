@@ -2,6 +2,8 @@
 
 See what your glob change actually changes.
 
+[Live demo](https://billy30183-rgb.github.io/globgap/) · [Source](https://github.com/billy30183-rgb/globgap)
+
 - Compare two glob patterns with Picomatch 4.0.7 and shared options.
 - Find deterministic, bounded synthetic examples added or removed by a change.
 - Check pasted relative paths with source labels, Unicode and space preservation.

@@ -4,7 +4,7 @@
 
 Compare two glob patterns and find example file paths that would be newly matched or silently dropped.
 
-[GitHub source](https://github.com/billy30183-rgb/globgap) · [Live demo — initial deployment pending](https://billy30183-rgb.github.io/globgap/)
+[GitHub source](https://github.com/billy30183-rgb/globgap) · [Live demo](https://billy30183-rgb.github.io/globgap/)
 
 You can also run `npm ci && npm run dev` and open [the local demo](http://127.0.0.1:4173/globgap/).
 
