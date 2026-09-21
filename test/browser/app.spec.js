@@ -110,3 +110,13 @@ test('oversized inputs are rejected and bounded generation is labelled incomplet
   await page.locator('#copy').click();
   expect(await page.locator('#report-text').inputValue()).toContain('Status: Incomplete');
 });
+
+test('brace filenames containing repeated periods work through the real Worker', async ({ page }) => {
+  await page.goto('./'); await expect(page.locator('#copy')).toBeEnabled();
+  await page.locator('#before').fill('reports/file..old.txt');
+  await page.locator('#after').fill('reports/{file..old,file..new}.txt');
+  await page.locator('#find').click(); await expect(page.locator('#copy')).toBeEnabled();
+  await expect(page.locator('#added')).toContainText('reports/file..new.txt');
+  await page.locator('#copy').click();
+  await expect(page.locator('#report-text')).toHaveValue(report(analyze({ before: 'reports/file..old.txt', after: 'reports/{file..old,file..new}.txt', provided: '' })));
+});

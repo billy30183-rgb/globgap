@@ -1,17 +1,24 @@
 {
   "name": "globgap",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "type": "module",
   "description": "Find example file paths added or dropped by a glob change. Browser-only, no uploads.",
   "license": "MIT",
-  "engines": { "node": ">=22" },
+  "engines": {
+    "node": ">=22"
+  },
   "scripts": {
     "test": "node --test test/*.test.js",
     "build": "node scripts/build.js",
     "dev": "node scripts/build.js && node scripts/serve.js",
     "test:browser": "npm run build && playwright test"
   },
-  "dependencies": { "picomatch": "4.0.7" },
-  "devDependencies": { "esbuild": "0.28.2", "@playwright/test": "1.63.0" }
+  "dependencies": {
+    "picomatch": "4.0.7"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "@playwright/test": "1.63.0"
+  }
 }

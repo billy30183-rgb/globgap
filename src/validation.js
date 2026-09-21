@@ -24,7 +24,8 @@ export function expandPattern(pattern) {
     } else if (char === '}') {
       if (!inside) throw new Error('Unbalanced braces.');
       const choices = group.split(',');
-      if (choices.length < 2 || choices.some(x => !x || x.includes('..'))) throw new Error('Braces require nonempty comma-separated alternatives; ranges are not supported.');
+      const range = /^(?:-?\d+\.\.-?\d+|[A-Za-z]\.\.[A-Za-z])(?:\.\.-?\d+)?$/;
+      if (choices.length < 2 || choices.some(x => !x || range.test(x))) throw new Error('Braces require nonempty comma-separated alternatives; ranges are not supported.');
       combinations *= choices.length;
       if (combinations > LIMITS.braces) throw new Error(`Brace expansion exceeds ${LIMITS.braces} combinations.`);
       parts = parts.flatMap(p => choices.map(c => p + c)); inside = false;

@@ -122,3 +122,11 @@ test('Markdown contains the same snapshot and safely encodes malicious names', (
   assert.match(md, new RegExp(`ADDED: ${r.counts.ADDED}`));
   assert.match(md, /4\.0\.7/); assert.match(md, /Provided path/); assert.match(md, /Generated example/);
 });
+
+test('brace alternatives preserve literal repeated periods in filenames', () => {
+  const r = compare('reports/file..old.txt', 'reports/{file..old,file..new}.txt', 'reports/file..old.txt\nreports/file..new.txt');
+  assert.equal(kind(r, 'reports/file..old.txt'), 'UNCHANGED');
+  assert.equal(kind(r, 'reports/file..new.txt'), 'ADDED');
+  assert.ok(r.rows.some(row => row.source === 'Generated example' && row.path === 'reports/file..new.txt' && row.kind === 'ADDED'));
+  for (const p of ['{1..3,x}.txt', '{a..z,x}.txt', '{-2..2..2,x}.txt']) assert.throws(() => expandPattern(p), /ranges/);
+});
